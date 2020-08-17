@@ -16,18 +16,28 @@ function startTime() {
   
   document.getElementById('txt').innerHTML =
 
-  diff;
+  msToTime(diff);
 
   var t = setTimeout(startTime, 10);
 
 }
 
-function checkTime(i) {
+function msToTime(s) {
+  var ms = s % 1000;
+  s = (s - ms) / 1000;
 
-  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  var secs = s % 60;
+  s = (s - secs) / 60;
 
-  return i;
+  var mins = s % 60;
+  var hrs = (s - mins) / 60;
 
+  return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms,3);
+}
+
+function pad(n, z) {
+    z = z || 2;
+    return ('00' + n).slice(-z);
 }
 
 </script>
