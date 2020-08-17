@@ -3,58 +3,86 @@
 <html>
 
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
 
-<script>
+  const date1 = new Date('September 5, 2020 11:00:00');
 
-const date1 = new Date('September 5, 2020 11:00:00');
+  var keyword = "algarve";
 
-function startTime() {
+  $(document).ready(function(){
 
-  var today = new Date();
+      $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=3718dbeac5ed04aa8c659234c54efdd1&tags=surf&format=json&nojsoncallback=1",
+      function(data) {
+          console.log(data)
+          var rnd = Math.floor(Math.random() * data.photos.photo.length);
+          console.log(rnd)
+          var image_id = data.photos.photo[rnd]['id'];
 
-  var diff = Math.abs(today - date1);
-  
-  console.log(0 == diff % 10000)
+          console.log(image_id) 
+          
+          $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=3718dbeac5ed04aa8c659234c54efdd1&photo_id="+image_id+"&format=json&nojsoncallback=1",
+          function(data) {
+            console.log(data)
+            var rnd2 = Math.floor(Math.random() * data.sizes.size.length);
+            
+            console.log(data.sizes.size[rnd2]['source'])
+            image_src = data.sizes.size[rnd2]['source']
+            $('body').css('background-image', "url('" + image_src + "')");
+          });
+          
+          
 
-  if(0 == diff % 10000){
-    warnung(diff)
+      });
+
+  });
+
+  function msToTime(s) {
+    var ms = s % 1000;
+    s = (s - ms) / 1000;
+
+    var secs = s % 60;
+    s = (s - secs) / 60;
+
+    var mins = s % 60;
+    var hrs = (s - mins) / 60;
+
+    return pad(hrs,3) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms,3);
   }
 
-  document.getElementById('txt').innerHTML =
+  function pad(n, z) {
+      z = z || 2;
+      return ('00' + n).slice(-z);
+  }
 
-  msToTime(diff);
-
-  var t = setTimeout(startTime, 10);
-
-}
-
-function msToTime(s) {
-  var ms = s % 1000;
-  s = (s - ms) / 1000;
-
-  var secs = s % 60;
-  s = (s - secs) / 60;
-
-  var mins = s % 60;
-  var hrs = (s - mins) / 60;
-
-  return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms,3);
-}
-
-function pad(n, z) {
-    z = z || 2;
-    return ('00' + n).slice(-z);
-}
-
-function warnung(ms) {
-    alert('Es sind nur noch eineige miliseconds '+ms);
-}
+  function warnung(ms) {
+      alert('Es sind nur noch eineige miliseconds '+ms);
+  }
 
 
+  function startTime() {
 
-window.onbeforeunload = function(e) {
-    return 'Please dont go!!';
-};
+    var today = new Date();
+
+    var diff = Math.abs(today - date1);
+
+    console.log(0 == diff % 10000)
+
+    if(0 == diff % 10000){
+      warnung(diff)
+    }
+
+    document.getElementById('txt').innerHTML =
+
+    msToTime(diff);
+
+    var t = setTimeout(startTime, 10);
+
+  }
+
+  window.onbeforeunload = function(e) {
+      return 'Please dont go!!';
+  };
 
 </script>
 
