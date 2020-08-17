@@ -14,6 +14,12 @@ function startTime() {
 
   var diff = Math.abs(today - date1);
   
+  console.log(0 == diff % 10000)
+
+  if(0 == diff % 10000){
+    warnung(diff)
+  }
+
   document.getElementById('txt').innerHTML =
 
   msToTime(diff);
@@ -39,6 +45,16 @@ function pad(n, z) {
     z = z || 2;
     return ('00' + n).slice(-z);
 }
+
+function warnung(ms) {
+    alert('Es sind nur noch eineige miliseconds '+ms);
+}
+
+
+
+window.onbeforeunload = function(e) {
+    return 'Please dont go!!';
+};
 
 </script>
 
