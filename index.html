@@ -10,32 +10,10 @@
 
   var keyword = "algarve";
 
-  $(document).ready(function(){
+  //$(document).ready(background());
 
-      $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=3718dbeac5ed04aa8c659234c54efdd1&tags=surf&format=json&nojsoncallback=1",
-      function(data) {
-          console.log(data)
-          var rnd = Math.floor(Math.random() * data.photos.photo.length);
-          console.log(rnd)
-          var image_id = data.photos.photo[rnd]['id'];
 
-          console.log(image_id) 
-          
-          $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=3718dbeac5ed04aa8c659234c54efdd1&photo_id="+image_id+"&format=json&nojsoncallback=1",
-          function(data) {
-            console.log(data)
-            var rnd2 = Math.floor(Math.random() * data.sizes.size.length);
-            
-            console.log(data.sizes.size[rnd2]['source'])
-            image_src = data.sizes.size[rnd2]['source']
-            $('body').css('background-image', "url('" + image_src + "')");
-          });
-          
-          
-
-      });
-
-  });
+ 
 
   function msToTime(s) {
     var ms = s % 1000;
@@ -47,7 +25,16 @@
     var mins = s % 60;
     var hrs = (s - mins) / 60;
 
-    return pad(hrs,3) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms,3);
+    var time = {
+      ms: ms,
+      secs: secs,
+      mins: mins,
+      hrs: hrs,
+      digit_clock: function() {
+        return pad(this.hrs,3) + ':' + pad(this.mins) + ':' + pad(this.secs) + '.' + pad(this.ms,3)
+      }
+    }
+    return time;
   }
 
   function pad(n, z) {
@@ -59,6 +46,11 @@
       alert('Es sind nur noch eineige miliseconds '+ms);
   }
 
+  function start(){
+    startTime()
+    background()
+  }
+
 
   function startTime() {
 
@@ -66,19 +58,42 @@
 
     var diff = Math.abs(today - date1);
 
-    console.log(0 == diff % 10000)
-
-    if(0 == diff % 10000){
-      warnung(diff)
-    }
+    diff_time = msToTime(diff)
 
     document.getElementById('txt').innerHTML =
 
-    msToTime(diff);
+    diff_time.digit_clock();
 
     var t = setTimeout(startTime, 10);
 
   }
+
+  function background(){
+
+    $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=3718dbeac5ed04aa8c659234c54efdd1&tags=surf&format=json&nojsoncallback=1",
+      function(data) {
+        console.log(data.photos.photo.length)
+        var rnd = Math.floor(Math.random() * data.photos.photo.length);
+        console.log(rnd)
+        var image_id = data.photos.photo[rnd]['id'];
+
+        console.log(image_id) 
+        
+        $.getJSON("https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=3718dbeac5ed04aa8c659234c54efdd1&photo_id="+image_id+"&format=json&nojsoncallback=1",
+        function(data) {
+          console.log(data)
+          var rnd2 = Math.floor(Math.random() * data.sizes.size.length);
+          
+          console.log(data.sizes.size[rnd2]['source'])
+          image_src = data.sizes.size[rnd2]['source']
+          $('body').css('background-image', "url('" + image_src + "')");
+        });
+    
+    
+
+      });
+      setTimeout(background, 10000); 
+  };
 
   window.onbeforeunload = function(e) {
       return 'Please dont go!!';
@@ -90,7 +105,7 @@
 
 ​
 
-<body onload="startTime()">
+<body onload="start()">
 
 ​
 <div style="text-align:center">
